@@ -9,8 +9,8 @@ calls and thoughts into a clickable summary:
 Worked for 47.0s · Locating missing client-side remote styles · 3 thoughts ›
 ```
 
-Click the summary to reveal the original items in order. Click the first item's
-header again to collapse the group. Each item's own expanded state is preserved.
+Click the summary to reveal the original items in order. Click the same native
+disclosure header again to collapse the group. Each item's own expanded state is preserved.
 
 ## Install
 
@@ -43,10 +43,12 @@ Open Tern's command palette and search for **ACP: Toggle tool groups** or
 - Settled failures and cancellations can fold with completed work. A separate
   status label preserves their counts; failures use the error color, and long
   descriptions cannot truncate that label.
-- Running and approval-pending items stay visible. Standalone tools without a
-  disclosure button keep their normal view.
-- The first item's native disclosure controls the group. If that item is already
-  expanded, the group remains expanded.
+- Completed inline tools, including Glob, Grep, Read and failed calls without their
+  own disclosure, join the same sequence as tool cards and thoughts.
+- Running and approval-pending items stay visible. A sequence with no native
+  disclosure keeps its normal view.
+- The first available native disclosure controls the group, even after inline
+  items. If that disclosure is already expanded, the group remains expanded.
 - Displayed time sums the durations reported for the group's tools and thoughts;
   overlapping calls can make it longer than wall-clock time.
 

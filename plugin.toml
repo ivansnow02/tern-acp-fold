@@ -1,7 +1,7 @@
 schema = 1
 id = "acp-fold"
 name = "ACP Tool Groups"
-version = "0.1.1"
+version = "0.1.2"
 description = "Group consecutive ACP tool calls and thoughts into clickable summaries in Tern."
 icon = "terminal"
 window = "window.luau"

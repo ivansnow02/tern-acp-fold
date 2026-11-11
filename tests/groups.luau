@@ -59,5 +59,21 @@ return function(Groups)
         turn("old", {{id = "thought", k = "section", p = {role = "omp.thinking", collapsible = true, collapsed = true, took = 200}}, tool("old-a")}), user,
     }, 1, {"thought", "old-a"})
 
+    local function inline(id, status)
+        return {id = id, k = "tool", p = {name = "grep", title = "Grep", status = status or "done", collapsible = false, frame = "inline", took = 10}}
+    end
+
+    check("inline tools before and after the disclosure stay in one group", {
+        turn("old", {inline("first"), inline("second"), tool("disclosure"), inline("failed", "error"), inline("cancelled", "cancelled")}), user,
+    }, 1, {"first", "second", "disclosure", "failed", "cancelled"})
+
+    check("inline tools do not split a completed thought group", {
+        turn("old", {{id = "thought", k = "section", p = {role = "omp.thinking", collapsible = true, collapsed = true, took = 200}}, inline("read"), inline("failed", "error"), tool("last")}), user,
+    }, 1, {"thought", "read", "failed", "last"})
+
+    check("inline completion does not close an active prefix", {
+        turn("current", {inline("first"), tool("disclosure"), inline("unsettled", "ask")}),
+    }, 0, {}, {"first", "disclosure", "unsettled"})
+
     return passed
 end

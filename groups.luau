@@ -36,7 +36,11 @@ function Groups.css(surface)
 		local turnSelector = ".sf-main > " .. selector(turn)
 		local interactionRule = false
 		local function flush(sealed)
-			if sealed and #run > 0 and (#run > 1 or run[1].k == "tool") and (run[1].p or {}).collapsible == true then
+			local anchorIndex = nil
+			for i, node in ipairs(run) do
+				if (node.p or {}).collapsible == true then anchorIndex = i; break end
+			end
+			if sealed and #run > 0 and (#run > 1 or run[1].k == "tool") and anchorIndex then
 				if not interactionRule then
 					-- Tern 0.9.14 otherwise leaves distant + siblings stale after a toggle.
 					table.insert(rules, turnSelector .. ":active > .sf { --acp-fold-pressed: 1; }")
@@ -79,16 +83,23 @@ function Groups.css(surface)
 				if cancelled > 0 then table.insert(statuses, tostring(cancelled) .. " cancelled") end
 				local status = table.concat(statuses, " · ") .. "  ›"
 				local statusColor = if failed > 0 then "var(--bad)" else "var(--sf-c-muted)"
-				local anchor = turnSelector .. " > " .. selector(run[1]) .. ".collapsed"
-				local head = anchor .. " > .sf-" .. run[1].k .. "-head"
+				local disclosure = run[anchorIndex]
+				local collapsed = selector(disclosure) .. ".collapsed"
+				local anchor = turnSelector .. " > " .. collapsed
+				local head = anchor .. " > .sf-" .. disclosure.k .. "-head"
 				table.insert(rules, anchor .. " { background: transparent !important; border: 0 !important; box-shadow: none !important; }")
 				table.insert(rules, head .. " > * { display: none !important; }")
 				table.insert(rules, head .. " { display: flex !important; flex-direction: row !important; align-items: center; width: 100% !important; max-width: 100% !important; min-width: 0; overflow: hidden; }")
 				table.insert(rules, head .. "::before { content: " .. quote(label) .. "; color: var(--sf-c-muted); order: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }")
 				table.insert(rules, head .. "::after { content: " .. quote(status) .. "; color: " .. statusColor .. "; order: 1; flex-shrink: 0; white-space: nowrap; margin-left: 8px; }")
-				table.insert(rules, anchor .. " > .sf-" .. run[1].k .. "-body { display: none !important; }")
+				table.insert(rules, anchor .. " > .sf-" .. disclosure.k .. "-body { display: none !important; }")
+				for i = 1, anchorIndex - 1 do
+					local member = selector(run[i])
+					-- Counting from the end observes the later disclosure without :has().
+					table.insert(rules, turnSelector .. " > " .. member .. ":nth-last-child(2 of " .. member .. ", " .. collapsed .. ") { display: none !important; }")
+				end
 				local gap = ""
-				for i = 2, #run do
+				for i = anchorIndex + 1, #run do
 					table.insert(rules, anchor .. gap .. " + " .. selector(run[i]) .. " { display: none !important; }")
 					gap ..= " + *"
 				end
@@ -100,7 +111,7 @@ function Groups.css(surface)
 			local p = node.p or {}
 			local thought = isThought(node)
 			local complete = (node.k == "tool" and (p.status == "done" or p.status == "error" or p.status == "cancelled")) or (thought and p.took ~= nil)
-			if complete and p.collapsible == true then
+			if complete then
 				table.insert(run, node)
 			elseif node.k == "tool" or thought then
 				-- Unsettled items stay visible; their active prefix remains open.
