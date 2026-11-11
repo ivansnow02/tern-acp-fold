@@ -32,7 +32,6 @@ function Groups.css(surface)
 	for index, turn in ipairs(children) do
 		if turn.k ~= "col" or (turn.p or {}).role ~= "omp.assistant" then continue end
 		local run = {}
-		local context = ""
 		local turnSelector = ".sf-main > " .. selector(turn)
 		local interactionRule = false
 		local function flush(sealed)
@@ -66,8 +65,6 @@ function Groups.css(surface)
 				local labels = {}
 				if intent ~= "" then
 					table.insert(labels, intent)
-				elseif context ~= "" then
-					table.insert(labels, context)
 				else
 					for _, name in ipairs(names) do
 						table.insert(labels, name .. (if totals[name] > 1 then " ×" .. totals[name] else ""))
@@ -118,9 +115,6 @@ function Groups.css(surface)
 				flush(complete)
 			else
 				flush(true)
-				if node.k == "md" then
-					context = titleText(p.text):match("[^\r\n]+") or ""
-				end
 			end
 		end
 		-- A later user closes historical turns, but an omitted tail is still unknown.

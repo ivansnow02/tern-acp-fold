@@ -36,8 +36,8 @@ Open Tern's command palette and search for **ACP: Toggle tool groups** or
   the sequence. A completed single tool also gets a compact summary.
 - A later user message closes the preceding turn's completed tail, including
   interrupted turns. Truncated snapshots and the current growing tail stay open.
-- The summary uses the first available tool intent, then the first line of the
-  agent's preceding explanation. If neither exists, it lists tool names and counts.
+- The summary uses the first available tool intent. Without one, it lists tool
+  names and counts. The agent's preceding explanation stays in the conversation.
 - Thought counts use the thinking blocks supplied by the ACP agent. Summaries
   require no additional model calls.
 - Settled failures and cancellations can fold with completed work. A separate
