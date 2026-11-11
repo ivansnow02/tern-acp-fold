@@ -32,14 +32,19 @@ desktop. The browser client does not run window-side Luau plugins.
 Open Tern's command palette and search for **ACP: Toggle tool groups** or
 **切换工具分组** to turn grouping off or on.
 
-- Completed, consecutive tool calls and thoughts form a group after a later
-  message closes the sequence.
+- Completed tool calls and thoughts form a group after a later message closes
+  the sequence. A completed single tool also gets a compact summary.
+- A later user message closes the preceding turn's completed tail, including
+  interrupted turns. Truncated snapshots and the current growing tail stay open.
 - The summary uses the first available tool intent, then the first line of the
   agent's preceding explanation. If neither exists, it lists tool names and counts.
 - Thought counts use the thinking blocks supplied by the ACP agent. Summaries
   require no additional model calls.
-- Running, failed, or approval-pending sequences stay visible. A still-growing
-  tail and standalone tools without a disclosure button keep their normal view.
+- Settled failures and cancellations can fold with completed work. A separate
+  status label preserves their counts; failures use the error color, and long
+  descriptions cannot truncate that label.
+- Running and approval-pending items stay visible. Standalone tools without a
+  disclosure button keep their normal view.
 - The first item's native disclosure controls the group. If that item is already
   expanded, the group remains expanded.
 - Displayed time sums the durations reported for the group's tools and thoughts;
